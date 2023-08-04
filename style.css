@@ -59,6 +59,12 @@ body {
     border-radius: 100px;
 }
 
+/* Sets the hover effect on all buttons 
+except for the equals one */
+.button:not([class="button equals"]):hover {
+    background-color: #2e2d2d;
+}
+
 .operator {
     color: #64D02F;
 }
