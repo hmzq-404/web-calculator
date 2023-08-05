@@ -1,29 +1,14 @@
-function add(number1, number2) {
-    return number1 + number2;
-}
-
-function subtract(number1, number2) {
-    return number1 - number2;
-}
-
-function multiply(number1, number2) {
-    return number1 * number2;
-}
-
-function divide(number1, number2) {
-    return number1 / number2;
-}
-
-const operators = {
-    "+": add,
-    "-": subtract,
-    "*": multiply,
-    "/": divide
+const operatorFunctions = {
+    "+": (number1, number2) => number1 + number2,
+    "-": (number1, number2) => number1 - number2,
+    "×": (number1, number2) => number1 * number2,
+    "÷": (number1, number2) => number1 / number2
 }
 
 function operate(operator, number1, number2) {
-    return operators[operator](number1, number2);
+    return operatorFunctions[operator](number1, number2);
 }
+
 
 const displayScreen = document.querySelector(".display-screen");
 const buttons = document.querySelectorAll(".button");
