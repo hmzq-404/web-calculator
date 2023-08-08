@@ -13,10 +13,25 @@ function operate(operator, number1, number2) {
     return operatorFunctions[operator](number1, number2);
 }
 
-function solveExpression() {
-    let expressionArray = expressionString.split(" ");
-    let numbersArray = expressionArray.filter((element) => !(element in operatorFunctions));
-    let operatorsArray = expressionArray.filter((element) => element in operatorFunctions);
+function formatExpression(expressionString) {
+    let resultExpression = [];
+
+    for (element of expressionString) {
+        if (element in operatorFunctions) {
+            resultExpression.push(` ${element} `);
+        } else {
+            resultExpression.push(element);
+        }
+    }
+    return resultExpression.join("");
+}
+
+function solveExpression(expressionString) {
+    let expressionArray = formatExpression(expressionString).split(" ");
+    let numbersArray = expressionArray
+    .filter((element) => !(element in operatorFunctions));
+    let operatorsArray = expressionArray
+    .filter((element) => element in operatorFunctions);
 }
 
 
@@ -30,25 +45,16 @@ function setButtonFunctions(event) {
         if (expressionString.length <= 0) return;
 
         expressionString = expressionString.slice(0, expressionString.length - 1);
-
-        if (expressionString[expressionString.length - 1 ] in operatorFunctions) {
-            expressionString = expressionString.slice(0, expressionString.length - 2);
-        }
     } 
     else if (buttonClicked.textContent === "=") {
-        solveExpression();
+        expressionString = solveExpression(expressionString);
     }
     else {
-        if (expressionString.split(" ").join("").length >= 10) return;
-        if (buttonClicked.textContent in operatorFunctions) {
-            expressionString += ` ${buttonClicked.textContent} `;
-        } else {
-            expressionString += buttonClicked.textContent;
-        }
+        if (expressionString.length === 9) return;
+        expressionString += buttonClicked.textContent;
     }
 
-    // Remove spaces from the expression
-    displayScreen.textContent = expressionString.split(" ").join("");
+    displayScreen.textContent = formatExpression(expressionString);
 }
 
 
