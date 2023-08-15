@@ -1,6 +1,7 @@
 const displayScreen = document.querySelector(".display-screen");
 const buttons = document.querySelectorAll(".button");
 let expressionString = "";
+let expressionSolved = false;
 
 const operatorFunctions = {
     "+": (number1, number2) => number1 + number2,
@@ -46,6 +47,34 @@ function combineOperators(expressionString) {
         .replace("-+", "-");
 }
 
+function reduceExpressionArray(numbersArray, operatorsArray, multiplyDivideOnly=false) {
+    let numbersCombined = 0;
+
+    for (let index = 0; index < operatorsArray.length; index++) {
+        let operator = operatorsArray[index];
+        let number1 = numbersArray[index - numbersCombined];
+        let number2 = numbersArray[index - numbersCombined + 1];
+
+        if (multiplyDivideOnly) {
+            if (operator === "×" || operator === "÷") {
+                numbersArray[index] = operate(operator, number1, number2);
+                numbersArray.splice(index - numbersCombined + 1, 1);
+                operatorsArray[index] = "";
+                numbersCombined++;
+            }
+        } else {
+            numbersArray[index] = operate(operator, number1, number2);
+            numbersArray.splice(index - numbersCombined + 1, 1);
+            operatorsArray[index] = "";
+            numbersCombined++;
+        }
+    }
+
+    operatorsArray = operatorsArray.filter(operator => operator in operatorFunctions);
+
+    return [numbersArray, operatorsArray];
+}
+
 
 function solveExpression(expressionString) {
     while (canCombineOperators(expressionString)) {
@@ -54,18 +83,39 @@ function solveExpression(expressionString) {
 
     let expressionArray = formatExpression(expressionString).split(" ");
     let numbersArray = expressionArray
-    .filter((element) => !(element in operatorFunctions));
+    .filter(element => !(element in operatorFunctions)) || [];
+
+    numbersArray = numbersArray.map(numberString => parseInt(numberString));
+
     let operatorsArray = expressionArray
-    .filter((element) => element in operatorFunctions);
+    .filter(element => element in operatorFunctions) || [];
 
     if (operatorsArray.length !== numbersArray.length - 1) {
         return "Syntax Error";
     }
+
+    [numbersArray, operatorsArray] = reduceExpressionArray(
+        numbersArray,
+        operatorsArray,
+        multiplyDivideOnly=true
+    );
+
+    [numbersArray, operatorsArray] = reduceExpressionArray(
+        numbersArray,
+        operatorsArray
+    );
+
+    return `${numbersArray[0]}`;
 }
 
 
 function setButtonFunctions(event) {
     const buttonClicked = event.target;
+
+    if (expressionSolved) {
+        expressionString = "";
+        expressionSolved = false;
+    }
 
     if (buttonClicked.textContent === "AC") {
         expressionString = "";
@@ -77,6 +127,7 @@ function setButtonFunctions(event) {
     } 
     else if (buttonClicked.textContent === "=") {
         expressionString = solveExpression(expressionString);
+        expressionSolved = true;
     }
     else {
         if (expressionString.length === 9) return;
