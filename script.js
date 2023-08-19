@@ -1,7 +1,7 @@
 const displayScreen = document.querySelector(".display-screen");
 const buttons = document.querySelectorAll(".button");
 let expressionString = "";
-let expressionSolved = false;
+let clearDisplay = false;
 
 const operatorFunctions = {
     "+": (number1, number2) => number1 + number2,
@@ -19,11 +19,15 @@ function formatExpression(expressionString) {
 
     for (let index = 0; index < expressionString.length; index++) {
         let character = expressionString[index];
+        let nextCharacter = expressionString[index + 1]
         if (character in operatorFunctions) {
             // Collapses extra space between operators
-            if (expressionString[index + 1] in operatorFunctions || index === expressionString.length - 1) {
+            if (nextCharacter in operatorFunctions || index === expressionString.length - 1) {
                 resultExpression += ` ${character}`;
-            } else {
+            } else if (index === 0 && !(nextCharacter in operatorFunctions)) {
+                resultExpression += character;
+            }
+              else {
                 resultExpression += ` ${character} `;
             }
         } else {
@@ -52,19 +56,19 @@ function reduceExpressionArray(numbersArray, operatorsArray, multiplyDivideOnly=
 
     for (let index = 0; index < operatorsArray.length; index++) {
         let operator = operatorsArray[index];
-        let number1 = numbersArray[index - numbersCombined];
-        let number2 = numbersArray[index - numbersCombined + 1];
-
+        let number1 = multiplyDivideOnly ? numbersArray[index - numbersCombined] : numbersArray[0];
+        let number2 = multiplyDivideOnly ? numbersArray[index - numbersCombined + 1] : numbersArray[1];
+        
         if (multiplyDivideOnly) {
             if (operator === "×" || operator === "÷") {
-                numbersArray[index] = operate(operator, number1, number2);
+                numbersArray[index - numbersCombined] = operate(operator, number1, number2);
                 numbersArray.splice(index - numbersCombined + 1, 1);
                 operatorsArray[index] = "";
                 numbersCombined++;
             }
         } else {
-            numbersArray[index] = operate(operator, number1, number2);
-            numbersArray.splice(index - numbersCombined + 1, 1);
+            numbersArray[0] = operate(operator, number1, number2);
+            numbersArray.splice(1, 1);
             operatorsArray[index] = "";
             numbersCombined++;
         }
@@ -77,6 +81,8 @@ function reduceExpressionArray(numbersArray, operatorsArray, multiplyDivideOnly=
 
 
 function solveExpression(expressionString) {
+    if (!expressionString) return "";
+
     while (canCombineOperators(expressionString)) {
         expressionString = combineOperators(expressionString);
     }
@@ -84,9 +90,7 @@ function solveExpression(expressionString) {
     let expressionArray = formatExpression(expressionString).split(" ");
     let numbersArray = expressionArray
     .filter(element => !(element in operatorFunctions)) || [];
-
     numbersArray = numbersArray.map(numberString => parseInt(numberString));
-
     let operatorsArray = expressionArray
     .filter(element => element in operatorFunctions) || [];
 
@@ -112,9 +116,9 @@ function solveExpression(expressionString) {
 function setButtonFunctions(event) {
     const buttonClicked = event.target;
 
-    if (expressionSolved) {
+    if (clearDisplay) {
         expressionString = "";
-        expressionSolved = false;
+        clearDisplay = false;
     }
 
     if (buttonClicked.textContent === "AC") {
@@ -127,10 +131,10 @@ function setButtonFunctions(event) {
     } 
     else if (buttonClicked.textContent === "=") {
         expressionString = solveExpression(expressionString);
-        expressionSolved = true;
+        clearDisplay = true;
     }
     else {
-        if (expressionString.length === 9) return;
+        // if (expressionString.length === 9) return;
         expressionString += buttonClicked.textContent;
     }
 
