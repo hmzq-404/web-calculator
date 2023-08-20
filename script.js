@@ -70,7 +70,6 @@ function reduceExpressionArray(numbersArray, operatorsArray, multiplyDivideOnly=
             numbersArray[0] = operate(operator, number1, number2);
             numbersArray.splice(1, 1);
             operatorsArray[index] = "";
-            numbersCombined++;
         }
     }
 
@@ -109,7 +108,11 @@ function solveExpression(expressionString) {
         operatorsArray
     );
 
-    return `${numbersArray[0]}`;
+    let result = numbersArray[0];
+    // Round to 7 decimal places
+    result = Math.round(result * 10000000) / 10000000;
+
+    return `${result}`;
 }
 
 
@@ -134,7 +137,7 @@ function setButtonFunctions(event) {
         clearDisplay = true;
     }
     else {
-        // if (expressionString.length === 9) return;
+        if (expressionString.length === 9) return;
         expressionString += buttonClicked.textContent;
     }
 

@@ -27,8 +27,7 @@ body {
     border-radius: 10px;
     background-color: #171717;
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    align-items: flex-start;
     padding: 10px;
     font-size: 50px;
 }
