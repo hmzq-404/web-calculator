@@ -109,7 +109,7 @@ function solveExpression(expressionString) {
     );
 
     let result = numbersArray[0];
-    
+
     if (!isFinite(result)) return "Math Error";
     // Round to 7 decimal places
     result = Math.round(result * 10000000) / 10000000;
@@ -139,7 +139,7 @@ function setButtonFunctions(event) {
         clearDisplay = true;
     }
     else {
-        if (expressionString.length === 9) return;
+        // if (expressionString.length === 9) return;
         expressionString += buttonClicked.textContent;
     }
 
