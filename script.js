@@ -139,7 +139,6 @@ function setButtonFunctions(event) {
         clearDisplay = true;
     }
     else {
-        // if (expressionString.length === 9) return;
         expressionString += buttonClicked.textContent;
     }
 
